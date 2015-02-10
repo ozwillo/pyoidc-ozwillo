@@ -56,7 +56,7 @@ class PBase(object):
             _kwargs = self.req_callback(method, url, **_kwargs)
 
         try:
-            r = requests.request(method, url, **_kwargs)
+            r = requests.request(method, url, auth=(self.client_id, self.client_secret), **_kwargs)
         except Exception as err:
             logger.error(
                 "http_request failed: %s, url: %s, htargs: %s, method: %s" % (
