@@ -14,6 +14,8 @@ from oic import rndstr
 from oic.oauth2 import HTTP_ARGS
 from oic.oauth2.consumer import ConfigurationError
 
+import requests
+
 from oic.oauth2.message import ErrorResponse
 from oic.oauth2.message import Message
 from oic.oauth2.exception import AuthnToOld
@@ -775,7 +777,7 @@ class Client(oauth2.Client):
             path, body, h_args))
 
         try:
-            resp = self.http_request(path, method, data=body, **h_args)
+            resp = requests.request(method, path, **h_args)
         except oauth2.MissingRequiredAttribute:
             raise
 
