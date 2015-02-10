@@ -463,6 +463,9 @@ class Client(PBase):
             if "key" not in kwargs and "keyjar" not in kwargs:
                 kwargs["keyjar"] = self.keyjar
 
+            if 'id_token' in resp:
+                self.id_token = resp['id_token']
+
             logger.debug("Verify response with {}".format(kwargs))
             verf = resp.verify(**kwargs)
 
