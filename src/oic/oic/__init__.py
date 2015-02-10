@@ -728,7 +728,7 @@ class Client(oauth2.Client):
                     uir["access_token"] = token.access_token
                 except Exception:
                     raise
-
+        self.access_token = token.access_token
         uri = self._endpoint("userinfo_endpoint", **kwargs)
         # If access token is a bearer token it might be sent in the
         # authorization header
