@@ -51,7 +51,7 @@ K2C = {
 
 class KeyBundle(object):
     def __init__(self, keys=None, source="", cache_time=300, verify_ssl=True,
-                 fileformat="jwk", keytype="RSA", keyusage=None):
+                 fileformat="jwk", keytype="RSA", keyusage=None, **kwargs):
         """
 
         :param keys: A list of dictionaries
@@ -74,6 +74,7 @@ class KeyBundle(object):
         self.keyusage = keyusage
         self.imp_jwks = None
         self.last_updated = 0
+        self.kwargs = kwargs
 
         if keys:
             self.source = None
@@ -146,6 +147,10 @@ class KeyBundle(object):
 
     def do_remote(self):
         args = {"verify": self.verify_ssl}
+
+        if 'client_id' in self.kwargs and 'client_secret' in self.kwargs:
+            args.update({'auth': (self.kwargs['client_id'], self.kwargs['client_secret'])})
+
         if self.etag:
             args["headers"] = {"If-None-Match": self.etag}
 
@@ -373,7 +378,7 @@ def dump_jwks(kbl, target):
 class KeyJar(object):
     """ A keyjar contains a number of KeyBundles """
 
-    def __init__(self, ca_certs=None, verify_ssl=True, keybundle_cls=KeyBundle):
+    def __init__(self, ca_certs=None, verify_ssl=True, client_id=None, client_secret=None, keybundle_cls=KeyBundle):
         """
 
         :param ca_certs:
@@ -385,6 +390,8 @@ class KeyJar(object):
         self.ca_certs = ca_certs
         self.verify_ssl = verify_ssl
         self.keybundle_cls = keybundle_cls
+        self.client_id = client_id
+        self.client_secret = client_secret
 
     def add_if_unique(self, issuer, use, keys):
         if use in self.issuer_keys[issuer] and self.issuer_keys[issuer][use]:
@@ -414,6 +421,8 @@ class KeyJar(object):
             kc = self.keybundle_cls(source=url, verify_ssl=False, **kwargs)
         else:
             kc = self.keybundle_cls(source=url, verify_ssl=self.verify_ssl,
+                                    client_id=self.client_id,
+                                    client_secret=self.client_secret,
                                     **kwargs)
 
         try:

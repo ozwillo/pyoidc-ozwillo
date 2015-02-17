@@ -61,7 +61,7 @@ class ExpiredToken(PyoidcError):
 class Client(PBase):
     _endpoints = ENDPOINTS
 
-    def __init__(self, client_id=None, ca_certs=None, client_authn_method=None,
+    def __init__(self, client_id=None, client_secret=None, ca_certs=None, client_authn_method=None,
                  keyjar=None, verify_ssl=True, config=None):
         """
 
@@ -73,12 +73,12 @@ class Client(PBase):
         :param verify_ssl: Whether the SSL certificate should be verified.
         :return: Client instance
         """
-
         PBase.__init__(self, ca_certs, verify_ssl=verify_ssl)
-
         self.client_id = client_id
         self.client_authn_method = client_authn_method
-        self.keyjar = keyjar or KeyJar(verify_ssl=verify_ssl)
+        self.keyjar = keyjar or KeyJar(verify_ssl=verify_ssl,
+                                       client_id=client_id,
+                                       client_secret=client_secret)
         self.verify_ssl = verify_ssl
         # self.secret_type = "basic "
 

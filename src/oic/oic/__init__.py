@@ -258,11 +258,11 @@ def claims_match(value, claimspec):
 class Client(oauth2.Client):
     _endpoints = ENDPOINTS
 
-    def __init__(self, client_id=None, ca_certs=None,
+    def __init__(self, client_id=None, client_secret=None, ca_certs=None,
                  client_prefs=None, client_authn_method=None, keyjar=None,
                  verify_ssl=True, config=None):
 
-        oauth2.Client.__init__(self, client_id, ca_certs,
+        oauth2.Client.__init__(self, client_id, client_secret, ca_certs,
                                client_authn_method=client_authn_method,
                                keyjar=keyjar, verify_ssl=verify_ssl,
                                config=config)
@@ -900,7 +900,9 @@ class Client(oauth2.Client):
 
         if keys:
             if self.keyjar is None:
-                self.keyjar = KeyJar(verify_ssl=self.verify_ssl)
+                self.keyjar = KeyJar(verify_ssl=self.verify_ssl,
+                                     client_id=self.client_id,
+                                     client_secret=self.client_secret)
 
             self.keyjar.load_keys(pcr, _pcr_issuer)
 
@@ -1084,8 +1086,11 @@ class Client(oauth2.Client):
             self.registration_response[
                 "token_endpoint_auth_method"] = "client_secret_basic"
         self.client_id = reginfo["client_id"]
+        # self.client_secret = self.keyjar.client_secret = reginfo["client_secret"]
+        self.client_id = self.keyjar.client_id = reginfo["client_id"]
+
         try:
-            self.client_secret = reginfo["client_secret"]
+            self.client_secret = self.keyjar.client_secret = reginfo["client_secret"]
         except KeyError:  # Not required
             pass
         else:
