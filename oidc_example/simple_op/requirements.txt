@@ -4,3 +4,7 @@ Jinja2==2.7.3
 oic==0.7.6
 yubico-client==1.9.1
 pyjwkest==1.0.1
+certifi>=2023.7.22 # not directly required, pinned by Snyk to avoid a vulnerability
+cryptography>=42.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+mako>=1.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.31.0 # not directly required, pinned by Snyk to avoid a vulnerability
